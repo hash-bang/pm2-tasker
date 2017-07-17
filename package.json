@@ -1,0 +1,35 @@
+{
+  "name": "pm2-tasker",
+  "version": "0.0.0",
+  "description": "Backend task queueing, allocation and oversight module that uses PM2.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hash-bang/pm2-tasker.git"
+  },
+  "keywords": [
+    "pm2",
+    "task",
+    "tasker"
+  ],
+  "author": "Matt Carter <m@ttcarter.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hash-bang/pm2-tasker/issues"
+  },
+  "homepage": "https://github.com/hash-bang/pm2-tasker#readme",
+  "devDependencies": {
+    "chai": "^4.1.0",
+    "mocha": "^3.4.2"
+  },
+  "dependencies": {
+    "async-chainable": "^2.3.2",
+    "lodash": "^4.17.4"
+  }
+}
