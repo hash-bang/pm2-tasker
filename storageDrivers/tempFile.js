@@ -60,6 +60,13 @@ module.exports = function(tasker) {
 				cb(null, tasks[task]);
 			});
 		})
+		.set('storage.set', function(task, cb) {
+			var tasks = readTasks(function(err, tasks) {
+				if (err) return cb(err);
+				tasks[task.id] = task;
+				writeTasks(tasks, cb);
+			});
+		})
 		.set('storage.create', function(task, cb) {
 			var tasks = readTasks(function(err, tasks) {
 				if (err) return cb(err);
