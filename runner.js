@@ -27,15 +27,17 @@ async()
 	})
 	// }}}
 	// Execute the task {{{
-	.then(function(next) {
-		console.log('RUN', taskId);
-		next();
+	.then('result', function(next) {
+		console.log('[pm2-tasker] RUN TASK', "'" + this.task.id + "'", '(file = "' + this.task.file + '")');
+		var taskFunc = require(this.task.file);
+		if (typeof taskFunc != 'function') return next('Task file "' + this.task.file + '" did not export a function');
+		taskFunc.call(this.task, this.task, next);
 	})
 	// }}}
 	// Mark the task as completed and return the result {{{
 	.then(function(next) {
-		console.log('MARK', this.task.id, 'AS COMPLETE');
 		this.task.status = 'complete';
+		if (this.result !== undefined) this.task.results = this.result; // Glue task.results if the task returned something
 		tasker.settings.storage.set(this.task, next);
 	})
 	// }}}

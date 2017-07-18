@@ -21,6 +21,7 @@ describe('Run basic task (primes)', function() {
 			})
 			.on('created', taskID => mlog.log('task created -', taskID))
 			.on('started', taskID => mlog.log('task started -', taskID))
+			.on('output', data => data.split('\n').forEach(l => mlog.log('>', l)))
 			.on('finished', task => {
 				if (task.id != 'test-primes') return;
 				resultTask = task;

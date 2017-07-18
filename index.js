@@ -263,6 +263,8 @@ function Tasker() {
 	* @emits checkin Emitted as (taskID) when a task is still running
 	* @emits run Emitted as (taskID) when a task is executed
 	* @emits started Emitted as (taskID) when PM2 actually starts the process
+	* @emits complete Emitted as (task) when either the PM2 task is cleaned up or the inline task completes
+	* @emits output Emitted as (data) when an inline task writes to stdout
 	* @returns {Object} This chainable object
 	*/
 	tasker.cycle = function(cb) {
@@ -362,13 +364,17 @@ function Tasker() {
 									nextTask(); // Start next task immediately - let PM2 manage the PID in the background
 								});
 								break;
+
 							case 'inline':
 								async()
 									.use(asyncExec)
 									.set('task', this.task)
 									.execDefaults({
-										log: cmd => console.log('[Tasker]', 'RUN', cmd.cmd + ' ' + cmd.params.join(' ')),
-										out: data => console.log('[Tasker]', '-->', data),
+										out: data => tasker.emit('output', data),
+									})
+									.then(function(next) {
+										tasker.emit('started', this.task.id);
+										next();
 									})
 									.exec([
 										'node',
@@ -376,9 +382,11 @@ function Tasker() {
 										this.task.id,
 										transferSettings,
 									])
-									.then(function(next) {
-										tasker.emit('started', this.task.id);
-										next();
+									.then('task', function(next) {
+										tasker.get(this.task.id, function(err, task) { // Refetch the task
+											if (task.status == 'complete') tasker.emit('finished', task);
+											next(null, task);
+										});
 									})
 									.end(nextTask);
 								break;
