@@ -18,14 +18,14 @@ function Tasker() {
 	tasker.settings = {
 		clean: {
 			enabled: true,
-			expiry: '10m',
+			expiry: '10m', // When to clean stopped PM2 proccesses, set to '0' to always clear
 		},
 		cycle: {
 			autoInstall: false,
 			duration: '2m',
 		},
 		exec: {
-			mode: 'inline', // ENUM: pm2, inline
+			mode: 'pm2', // ENUM: pm2, inline
 			transferSettings: ['storage'], // Array (dotted notation) of settings to pass to children. This usually only needs to be 'storage'
 			pm2Options: {
 				autorestart: false,
@@ -241,7 +241,7 @@ function Tasker() {
 		if (status && !tasker.cycleTimerHandle) { // Starting
 			var cycleRun = function() {
 				tasker.cycle(function() {
-					tasker.cycleTimerHandle = setTimeout(cycleRun, new duration(tasker.cycle.duration));
+					tasker.cycleTimerHandle = setTimeout(cycleRun, duration.parse(tasker.cycle.duration));
 				});
 			};
 			cycleRun();
@@ -279,7 +279,7 @@ function Tasker() {
 
 				async()
 					.set('tasks', this.tasks)
-					.set('expiry', new Date(new Date() + new duration(tasker.settings.clean.expiry)))
+					.set('expiry', !tasker.settings.clean.expiry && tasker.settings.clean.expiry != '0' ? new Date(Date.now() + duration.parse(tasker.settings.clean.expiry)) : false)
 					.then('pm2', function(next) {
 						pm2.connect(next);
 					})
@@ -289,7 +289,7 @@ function Tasker() {
 					.forEach('pm2Procs', function(next, pm2Proc) {
 						if (!this.tasks.includes(pm2Proc.name)) return next(); // Not a task we are watching
 						if (pm2Proc.pm2_env.status == 'stopped') {
-							if (new Date(pm2Proc.pm2_env.created_at) > this.expiry) {
+							if (!this.expiry || new Date(pm2Proc.pm2_env.created_at) >= this.expiry) {
 								tasker.emit('clean', pm2Proc.name);
 								pm2.delete(pm2Proc.name, ()=> next());
 							} else {

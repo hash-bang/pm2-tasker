@@ -69,14 +69,16 @@ describe('Run basic task (timeout)', function() {
 		});
 	});
 
-	it.skip('should clean up expired tasks', function(done) {
+	it('should clean up expired tasks', function(done) {
 		tasker
-			.set('clean.expire', '0')
+			.set('clean.expiry', '0')
 			.cycle()
-				.on('clean', function(taskID) {
-					expect(taskID).to.equal(newTask.id);
-					done();
-				})
+			.on('cleanPending', ()=> done('Didnt clean the task (status=cleanPending)'))
+			.on('checkin', ()=> done('Didnt clean the task (checkin)'))
+			.on('clean', function(taskID) {
+				expect(taskID).to.equal(newTask.id);
+				done();
+			})
 	});
 
 });
