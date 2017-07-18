@@ -86,7 +86,7 @@ function Tasker() {
 	tasker.setup = function(options) {
 		_.merge(tasker.settings, options);
 		if (tasker.settings.storage.driver) tasker.use('storageDrivers/' +  tasker.settings.storage.driver);
-		if (tasker.cycle.autoInstall) tasker.cycleStatus(true);
+		if (tasker.settings.cycle.autoInstall) tasker.cycleStatus(true);
 
 		return tasker;
 	};
@@ -241,7 +241,7 @@ function Tasker() {
 		if (status && !tasker.cycleTimerHandle) { // Starting
 			var cycleRun = function() {
 				tasker.cycle(function() {
-					tasker.cycleTimerHandle = setTimeout(cycleRun, duration.parse(tasker.cycle.duration));
+					tasker.cycleTimerHandle = setTimeout(cycleRun, duration.parse(tasker.settings.cycle.duration));
 				});
 			};
 			cycleRun();
@@ -351,6 +351,7 @@ function Tasker() {
 							.value();
 
 						switch (tasker.settings.exec.mode) {
+
 							case 'pm2':
 								pm2.start(_.merge({
 									name: this.task.id,

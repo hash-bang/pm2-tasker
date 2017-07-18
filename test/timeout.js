@@ -19,7 +19,7 @@ describe('Run basic task (timeout)', function() {
 	it('should setup the task', function(done) {
 		tasker.create(newTask)
 			.on('created', function(task) {
-				expect(task).to.equal('testTask');
+				expect(task).to.equal('test-timeout');
 				done();
 			})
 	});
@@ -27,13 +27,13 @@ describe('Run basic task (timeout)', function() {
 	it('should have the task listed', function(done) {
 		tasker.list(function(err, tasks) {
 			expect(err).to.not.be.ok;
-			expect(tasks).to.include('testTask');
+			expect(tasks).to.include('test-timeout');
 			done();
 		});
 	});
 
 	it('should be able to retrieve the task', function(done) {
-		tasker.get('testTask', function(err, task) {
+		tasker.get('test-timeout', function(err, task) {
 			expect(err).to.not.be.ok;
 			expect(task).to.be.deep.equal(newTask);
 			done();
