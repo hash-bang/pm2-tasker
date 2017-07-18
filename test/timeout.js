@@ -3,7 +3,7 @@ var tasker = require('..');
 
 describe('Run basic task (timeout)', function() {
 	var newTask = {
-		id: 'testTask',
+		id: 'test-timeout',
 		file: __dirname + '/../examples/timeout.js',
 		status: 'paused',
 		delay: 3000,
