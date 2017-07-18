@@ -12,6 +12,7 @@ describe('Run basic task (timeout)', function() {
 	};
 
 	before('tasker.setup()', ()=> tasker
+		.set('exec.mode', 'pm2')
 		.set('cycle.autoInstall', false)
 		.setup()
 	);

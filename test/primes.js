@@ -11,7 +11,7 @@ describe('Run basic task (primes)', function() {
 
 		tasker
 			.set('exec.mode', 'inline')
-			.set('cycle.autoInstall', true) // Enable this here as some other tests disable it
+			.set('cycle.autoInstall', true)
 			.setup()
 			.create({
 				id: 'test-primes',
